@@ -1,0 +1,130 @@
+﻿@using CalculationLibrary.DataModels
+@model ResultPageModel
+@{
+    ViewData["Title"] = "Result";
+}
+<div class="row">
+    <div class="col-md-6">
+        <form action="/Home/Result" method="post" class="form-floating">
+            <div class="mb-3">
+                <label for="RasH" class="form-control" type="text" placeholder="Default input" aria-label="default input example">Высота слоя, м:</label>
+                <input name="DataRow.RasH" id="RasH" value="@Model?.DataRow?.RasH" class="form-control" />
+            </div>
+            <div class="mb-3">
+                <label for="RasTm" class="form-control" type="text" placeholder="Default input" aria-label="default input example">Начальная температура материала, °C:</label>
+                <input name="DataRow.RasTm" id="RasTm" value="@Model?.DataRow?.RasTm" class="form-control" />
+            </div>
+            <div class="mb-3">
+                <label for="RasTg" class="form-control" type="text" placeholder="Default input" aria-label="default input example">Начальная температура газа, °C:</label>
+                <input name="DataRow.RasTg" id="RasTg" value="@Model?.DataRow?.RasTg" class="form-control" />
+            </div>
+            <div class="mb-3">
+                <label for="RasV" class="form-control" type="text" placeholder="Default input" aria-label="default input example">Скорость газа на свободное сечение шахты, м/с:</label>
+                <input name="DataRow.RasV" id="RasV" value="@Model?.DataRow?.RasV" class="form-control" />
+            </div>
+            <div class="mb-3">
+                <label for="RasTemG" class="form-control" type="text" placeholder="Default input" aria-label="default input example">Средняя теплоёмкость газа, кДж/(м3 • К):</label>
+                <input name="DataRow.RasTemG" id="RasTemG" value="@Model?.DataRow?.RasTemG" class="form-control" />
+            </div>
+            <div class="mb-3">
+                <label for="RasRas" class="form-control" type="text" placeholder="Default input" aria-label="default input example">Расход материалов, кг/с:</label>
+                <input name="DataRow.RasRas" id="RasRas" value="@Model?.DataRow?.RasRas" class="form-control" />
+            </div>
+            <div class="mb-3">
+                <label for="RasTemM" class="form-control" type="text" placeholder="Default input" aria-label="default input example">Теплоемкость материалов, кДж/(кг • К):</label>
+                <input name="DataRow.RasTemM" id="RasTemM" value="@Model?.DataRow?.RasTemM" class="form-control" />
+            </div>
+            <div class="mb-3">
+                <label for="RasTepl" class="form-control" type="text" placeholder="Default input" aria-label="default input example">Объемный коэффициент теплоотдачи, Вт/(м3 • К):</label>
+                <input name="DataRow.RasTepl" id="RasTepl" value="@Model?.DataRow?.RasTepl" class="form-control" />
+            </div>
+            <div class="mb-3">
+                <label for="RasD" class="form-control" type="text" placeholder="Default input" aria-label="default input example">Диаметр аппарата, м:</label>
+                <input name="DataRow.RasD" id="RasD" value="@Model?.DataRow?.RasD" class="form-control" />
+            </div>
+            <div class="form-check form-switch form-check-reverse">
+                <input class="form-check-input" type="checkbox" id="flexSwitchCheckReverse" asp-for="save">
+                <label class="form-check-label" for="flexSwitchCheckReverse">Сохранить результаты</label>
+            </div>
+            <div>
+                <button type="submit" class="btn btn-outline-primary">Рассчитать</button>
+            </div>
+        </form>
+    </div>
+    <div class="col-md-6">
+        <table class="table table-striped">
+            <tr>
+                <td>Высота слоя, м</td>
+                @foreach (var row in Model?.OutputDataModel?.RowModels ?? new List<RowModel>())
+                {
+                    <td>@Math.Round(row.RasH, 1)</td>
+                }
+            </tr>
+            <tr>
+                <td>t, °C</td>
+                @foreach (var row in Model?.OutputDataModel?.RowModels ?? new List<RowModel>())
+                {
+                    <td>@Math.Round(row.t, 3)</td>
+                }
+            </tr>
+            <tr>
+                <td>T, °C</td>
+                @foreach (var row in Model?.OutputDataModel?.RowModels ?? new List<RowModel>())
+                {
+                    <td>@Math.Round(row.T, 3)</td>
+                }
+            </tr>
+            <tr>
+                <td>T - t, °C</td>
+                @foreach (var row in Model?.OutputDataModel?.RowModels ?? new List<RowModel>())
+                {
+                    <td>@Math.Round(row.DeltaT, 3)</td>
+                }
+            </tr>
+        </table>
+        <div>
+            <canvas id="myChart"></canvas>
+        </div>
+    </div>
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.js" integrity="sha512-ZwR1/gSZM3ai6vCdI+LVF1zSq/5HznD3ZSTk7kajkaj4D292NLuduDCO1c/NT8Id+jE58KYLKT7hXnbtryGmMg==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+<script>
+    var lables = @Json.Serialize(Model?.OutputDataModel?.RowModels.Select(row => row.RasH).ToList())
+        var tgaz = @Json.Serialize(Model?.OutputDataModel?.RowModels.Select(row => row.T).ToList())
+        var tmat = @Json.Serialize(Model?.OutputDataModel?.RowModels.Select(row => row.t).ToList())
+        var delta = @Json.Serialize(Model?.OutputDataModel?.RowModels.Select(row => row.DeltaT).ToList())
+    const ctx = document.getElementById('myChart');
+
+    new Chart(ctx, {
+        type: 'line',
+        data: {
+            labels: lables,
+            datasets: [{
+                label: 'f(H) = T, Температура газа',
+                data: tgaz,
+                borderWidth: 1
+            },
+                {
+            label: 'f(H) = t, Температура материала',
+                data: tmat,
+            borderWidth: 1
+        },
+            {
+                label: 'Разница температур',
+                data: delta,
+                borderWidth: 1
+            }]
+        },
+        options: {
+            scales: {
+                x: {
+                    title: { display: true, text: 'Высота слоя' }
+                },
+                y: {
+                    title: { display: true, text: 'Температура' }
+                }
+            }
+        }
+    });
+</script>

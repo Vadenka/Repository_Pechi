@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace CalculationLibrary.DataModels
 {
-    internal class OutputDataModel
+    public class OutputDataModel
     {
         public List<RowModel> RowModels { get; set; } = new List<RowModel>();
         public double m { get; set; }

@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace CalculationLibrary.DataModels
 {
-    internal class RowModel
+    public class RowModel
     {
         public float RasH { get; set; }
         public double Y { get; set; }
@@ -18,4 +18,5 @@ namespace CalculationLibrary.DataModels
         public double T { get; set; }
         public double DeltaT { get; set; }
     }
+
 }

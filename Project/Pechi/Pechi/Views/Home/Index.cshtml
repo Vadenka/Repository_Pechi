@@ -1,8 +1,41 @@
-﻿@{
+﻿@model List<DataRow>
+@{
     ViewData["Title"] = "Home Page";
 }
 
 <div class="text-center">
-    <h1 class="display-4">Welcome</h1>
-    <p>Learn about <a href="https://learn.microsoft.com/aspnet/core">building Web apps with ASP.NET Core</a>.</p>
+    <h1 class="display-4">Только посмотри на эти старые вычисления, @(User.Identity?.Name ?? "путник")!</h1>
 </div>
+<table class="table table-striped">
+    <tr>
+        <th>Номер записи</th>
+        <th>Высота слоя</th>
+        <th>Начальная температура материала</th>
+        <th>Начальная температура газа</th>
+        <th>Скорость газа на свободное сечение шахты</th>
+        <th>Средняя теплоёмкость газа</th>
+        <th>Расход материалов</th>
+        <th>Теплоёмкость материалов</th>
+        <th>Объёмный коэффицент теплоотдачи</th>
+        <th>Диаметр аппарата</th>
+        <th>Расчёт</th>
+        @foreach (var data in Model)
+        {
+        <tr>
+            <td>@data.ID</td>
+            <td>@data.RasH</td>
+            <td>@data.RasTm</td>
+            <td>@data.RasTg</td>
+            <td>@data.RasV</td>
+            <td>@data.RasTemG</td>
+            <td>@data.RasRas</td>
+            <td>@data.RasTemM</td>
+            <td>@data.RasTepl</td>
+            <td>@data.RasD</td>
+            <td>
+                <a href="/Home/Result?variant=@data.ID">Открыть</a>
+                <a href="/Home/Delete/@data.ID">Удалить</a>
+            </td>
+        </tr>
+        }
+</table>

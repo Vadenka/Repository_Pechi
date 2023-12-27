@@ -19,4 +19,8 @@
     </PackageReference>
   </ItemGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="..\CalculationLibrary\CalculationLibrary.csproj" />
+  </ItemGroup>
+
 </Project>
