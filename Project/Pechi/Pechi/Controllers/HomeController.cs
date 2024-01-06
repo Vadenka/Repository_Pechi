@@ -30,6 +30,14 @@ namespace Pechi.Controllers
         {
             if (model.DataRow == null) { return View(); }
 
+            if (model.DataRow.RasH <= 0 || model.DataRow.RasTm <= 0 || model.DataRow.RasTg <= 0 ||
+                model.DataRow.RasV <= 0 || model.DataRow.RasTemG <= 0 || model.DataRow.RasRas <= 0 ||
+                model.DataRow.RasTemM <= 0 || model.DataRow.RasTepl <= 0 || model.DataRow.RasD <= 0)
+            {
+                ModelState.AddModelError("DataRow", "Пожалуйста, введите корректные значения для всех полей.");
+                return View(model);
+            }
+
             var transferData = new InputDataModel
             {
                 RasH = model.DataRow.RasH,
